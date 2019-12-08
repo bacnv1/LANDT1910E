@@ -1,6 +1,11 @@
 package com.t3h.file;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
@@ -56,6 +61,71 @@ public class FileManager {
                 System.out.print(readableFileSize(file.length()));
                 System.out.println();
             }
+        }
+    }
+
+    public void write(String value) {
+        try {
+            File f = new File(path);
+            if (f.exists() == false) {
+                f.getParentFile().mkdirs();
+                f.createNewFile();
+            }
+            FileOutputStream out = new FileOutputStream(f, true);
+            out.write(value.getBytes());
+            out.close();
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void read() {
+        try {
+            File f = new File(path);
+            if (!f.exists()) {
+                return;
+            }
+            FileInputStream in = new FileInputStream(f);
+            byte[] b = new byte[1024];
+            int count = in.read(b);
+            String s = "";
+            while (count > 0) {
+                s += new String(b, 0, count, "utf-8");
+                count = in.read(b);
+            }
+            in.close();
+            System.out.println(s);
+        }catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void download(String link, String path) {
+        try {
+            File f = new File(path);
+            f.getParentFile().mkdirs();
+            f.createNewFile();
+            FileOutputStream out = new FileOutputStream(f);
+
+            URL url = new URL(link);
+            URLConnection connection = url.openConnection();
+            InputStream in = connection.getInputStream();
+            long total = connection.getContentLengthLong();
+            long totalDownloaded = 0;
+
+            byte[] b = new byte[1024];
+            int count = in.read(b);
+            while (count > 0) {
+                totalDownloaded += count;
+                int percent = (int) (totalDownloaded * 100 / total);
+                System.out.println(percent);
+                out.write(b, 0, count);
+                count = in.read(b);
+            }
+            in.close();
+            out.close();
+        }catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
