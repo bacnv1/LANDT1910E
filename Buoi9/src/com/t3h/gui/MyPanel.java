@@ -8,9 +8,11 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class MyPanel extends JPanel implements KeyListener {
+public class MyPanel extends JPanel implements KeyListener, Runnable {
 
     private GameManager manager = new GameManager();
+    private boolean[] flag = new boolean[256];
+
 
     public MyPanel() {
         manager.initGame();
@@ -18,6 +20,9 @@ public class MyPanel extends JPanel implements KeyListener {
 
         setFocusable(true);
         addKeyListener(this);
+
+        Thread t = new Thread(this);
+        t.start();
     }
 
     @Override
@@ -38,25 +43,36 @@ public class MyPanel extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT:
-                manager.playerMove(Tank.LEFT);
-                break;
-            case KeyEvent.VK_RIGHT:
-                manager.playerMove(Tank.RIGHT);
-                break;
-            case KeyEvent.VK_UP:
-                manager.playerMove(Tank.UP);
-                break;
-            case KeyEvent.VK_DOWN:
-                manager.playerMove(Tank.DOWN);
-                break;
-        }
-        repaint();
+        flag[e.getKeyCode()] = true;
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        flag[e.getKeyCode()] = false;
+    }
 
+    @Override
+    public void run() {
+        while (true) {
+            if (flag[KeyEvent.VK_LEFT]) {
+                manager.playerMove(Tank.LEFT);
+            } else if (flag[KeyEvent.VK_RIGHT]) {
+                manager.playerMove(Tank.RIGHT);
+            } else if (flag[KeyEvent.VK_UP]) {
+                manager.playerMove(Tank.UP);
+            } else if (flag[KeyEvent.VK_DOWN]) {
+                manager.playerMove(Tank.DOWN);
+            }
+            if (flag[KeyEvent.VK_SPACE]) {
+                manager.playerFire();
+            }
+            manager.AI();
+            repaint();
+            try {
+                Thread.sleep(7);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
