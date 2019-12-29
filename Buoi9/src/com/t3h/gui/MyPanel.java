@@ -66,7 +66,22 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
             if (flag[KeyEvent.VK_SPACE]) {
                 manager.playerFire();
             }
-            manager.AI();
+            boolean die = manager.AI();
+            if (die) {
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        "Do you want to replay",
+                        "Game Over",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                if (result == JOptionPane.YES_OPTION) {
+                    manager.initGame();
+                    flag = new boolean[256];
+                } else {
+                    System.exit(0);
+                }
+            }
             repaint();
             try {
                 Thread.sleep(7);

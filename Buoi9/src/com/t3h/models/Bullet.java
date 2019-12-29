@@ -39,4 +39,10 @@ public class Bullet {
         return x < 0 || x > MyFrame.W_FRAME ||
                 y < 0 || y > MyFrame.H_FRAME;
     }
+
+    public Rectangle getRect() {
+        int w = image.getWidth(null);
+        int h = image.getHeight(null);
+        return new Rectangle(x, y, w, h);
+    }
 }
