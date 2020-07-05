@@ -1,12 +1,21 @@
 package com.t3h.buoi12.model;
 
 public class Song {
+    private long id;
     private String data;
     private int size;
     private String title;
     private int duration;
     private String artist;
     private String album;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getData() {
         return data;

@@ -28,7 +28,7 @@ public class SystemData {
 //        MediaStore.Audio.Media.INTERNAL_CONTENT_URI
         ArrayList<Song> arr = new ArrayList<>();
         Cursor cursor = resolver.query(
-                MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 null,
                 null,
                 null,
@@ -36,6 +36,7 @@ public class SystemData {
         );
         cursor.moveToFirst();
 
+        int indexId = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM_ID);
         int indexData = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA);
         int indexSize = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.SIZE);
         int indexTitle = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE);
@@ -53,7 +54,9 @@ public class SystemData {
             String title = cursor.getString(indexTitle);
             String artist = cursor.getString(indexArtist);
             String album = cursor.getString(indexAlbum);
+            long id = cursor.getLong(indexId);
             Song song = new Song();
+            song.setId(id);
             song.setAlbum(album);
             song.setArtist(artist);
             song.setData(data);

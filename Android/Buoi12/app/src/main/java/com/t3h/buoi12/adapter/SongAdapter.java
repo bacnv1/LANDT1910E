@@ -16,6 +16,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
     private LayoutInflater inflater;
     private ArrayList<Song> data;
+    private SongItemClickLister lister;
 
     public SongAdapter(LayoutInflater inflater) {
         this.inflater = inflater;
@@ -24,6 +25,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     public void setData(ArrayList<Song> data) {
         this.data = data;
         notifyDataSetChanged();
+    }
+
+    public void setLister(SongItemClickLister lister) {
+        this.lister = lister;
     }
 
     @NonNull
@@ -37,6 +42,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     @Override
     public void onBindViewHolder(@NonNull SongHolder holder, int position) {
         holder.binding.setItem(data.get(position));
+        if (lister != null) {
+            holder.binding.setListener(lister);
+        }
     }
 
     @Override
@@ -50,5 +58,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
             super(binding.getRoot());
             this.binding = binding;
         }
+    }
+
+    public interface SongItemClickLister{
+        void onSongItemClicked(Song item);
     }
 }
