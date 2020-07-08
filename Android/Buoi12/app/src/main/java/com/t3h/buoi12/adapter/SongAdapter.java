@@ -3,6 +3,8 @@ package com.t3h.buoi12.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,10 +14,14 @@ import com.t3h.buoi12.model.Song;
 
 import java.util.ArrayList;
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> implements Filterable {
+
+    private SongFilter filter = new SongFilter();
 
     private LayoutInflater inflater;
     private ArrayList<Song> data;
+    private ArrayList<Song> dataAll;
+
     private SongItemClickLister lister;
 
     public SongAdapter(LayoutInflater inflater) {
@@ -24,6 +30,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
     public void setData(ArrayList<Song> data) {
         this.data = data;
+        this.dataAll = data;
         notifyDataSetChanged();
     }
 
@@ -52,6 +59,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
         return data == null ? 0 : data.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
     public class SongHolder extends RecyclerView.ViewHolder {
         private ItemSongBinding binding;
         public SongHolder(@NonNull ItemSongBinding binding) {
@@ -62,5 +74,28 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
 
     public interface SongItemClickLister{
         void onSongItemClicked(Song item);
+    }
+
+    public class SongFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence key) {
+            ArrayList<Song> result = new ArrayList<>();
+            for (Song s: dataAll) {
+                if (s.getTitle().toLowerCase().contains(key.toString().toLowerCase())) {
+                    result.add(s);
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.count = result.size();
+            filterResults.values = result;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            data = (ArrayList<Song>) results.values;
+            notifyDataSetChanged();
+        }
     }
 }

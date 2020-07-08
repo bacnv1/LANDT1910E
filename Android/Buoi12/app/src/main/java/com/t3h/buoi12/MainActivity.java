@@ -8,6 +8,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.SearchView;
 
 import com.t3h.buoi12.adapter.SongAdapter;
 import com.t3h.buoi12.databinding.ActivityMainBinding;
@@ -16,7 +17,7 @@ import com.t3h.buoi12.utils.SystemData;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements SongAdapter.SongItemClickLister, MainListener {
+public class MainActivity extends AppCompatActivity implements SongAdapter.SongItemClickLister, MainListener, SearchView.OnQueryTextListener {
 
     private SystemData data;
     private ActivityMainBinding binding;
@@ -69,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements SongAdapter.SongI
                 binding.setIsPlaying(false);
             }
         };
+
+        binding.search.setOnQueryTextListener(this);
     }
 
     private boolean checkPermission() {
@@ -113,5 +116,16 @@ public class MainActivity extends AppCompatActivity implements SongAdapter.SongI
         } else {
             mediaController.start();
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        adapter.getFilter().filter(newText);
+        return true;
     }
 }
