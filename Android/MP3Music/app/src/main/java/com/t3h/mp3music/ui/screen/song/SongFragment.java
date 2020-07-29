@@ -9,9 +9,11 @@ import com.t3h.mp3music.databinding.FragmentSongBinding;
 import com.t3h.mp3music.models.Song;
 import com.t3h.mp3music.ui.base.BaseBindingAdapter;
 import com.t3h.mp3music.ui.base.BaseFragment;
+import com.t3h.mp3music.ui.screen.MediaListener;
 import com.t3h.mp3music.ui.screen.album.AlbumViewModel;
+import com.t3h.mp3music.ui.screen.main.MainActivity;
 
-public class SongFragment extends BaseFragment<FragmentSongBinding, SongViewModel> {
+public class SongFragment extends BaseFragment<FragmentSongBinding, SongViewModel> implements MediaListener<Song> {
 
     private BaseBindingAdapter<Song> adapter;
 
@@ -31,6 +33,15 @@ public class SongFragment extends BaseFragment<FragmentSongBinding, SongViewMode
         adapter = new BaseBindingAdapter<>(
                 R.layout.item_song, getLayoutInflater());
         binding.setAdapter(adapter);
+        adapter.setListener(this);
         adapter.setData(viewModel.getSong(getContext()));
+    }
+
+    @Override
+    public void onItemMediaClicked(Song item) {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.getService().setData(adapter.getData());
+        activity.getService().getController()
+                .create(adapter.getData().indexOf(item));
     }
 }

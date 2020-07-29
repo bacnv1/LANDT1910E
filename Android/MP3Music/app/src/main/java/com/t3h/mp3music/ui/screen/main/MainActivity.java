@@ -1,6 +1,11 @@
 package com.t3h.mp3music.ui.screen.main;
 
 import android.Manifest;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -10,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.t3h.mp3music.R;
 import com.t3h.mp3music.databinding.ActivityMainBinding;
 import com.t3h.mp3music.models.Artist;
+import com.t3h.mp3music.service.MP3Service;
 import com.t3h.mp3music.ui.base.BaseActivity;
 import com.t3h.mp3music.ui.base.BaseFragment;
 import com.t3h.mp3music.ui.screen.album.AlbumFragment;
@@ -21,6 +27,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     private AlbumFragment fmAlbum = new AlbumFragment();
     private SongFragment fmSong = new SongFragment();
     private ArtistFragment fmArtist = new ArtistFragment();
+    private MP3Service service;
 
     @Override
     protected Class<MainViewModel> getViewModelClass() {
@@ -39,12 +46,28 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                     binding.bottomNav.setOnNavigationItemSelectedListener(MainActivity.this);
                     initFragment();
                     showFragment(fmSong);
+                    Intent intent = new Intent(MainActivity.this,
+                            MP3Service.class);
+                    bindService(intent, connection, Context.BIND_AUTO_CREATE);
                 } else {
                     finish();
                 }
             }
         });
     }
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            MP3Service.MP3Binder mp3Binder = (MP3Service.MP3Binder) binder;
+            service = mp3Binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     private void initFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -85,5 +108,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 break;
         }
         return true;
+    }
+
+    public MP3Service getService() {
+        return service;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(connection);
     }
 }
