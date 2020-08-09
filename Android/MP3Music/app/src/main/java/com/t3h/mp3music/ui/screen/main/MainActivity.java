@@ -61,6 +61,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         public void onServiceConnected(ComponentName name, IBinder binder) {
             MP3Service.MP3Binder mp3Binder = (MP3Service.MP3Binder) binder;
             service = mp3Binder.getService();
+            binding.controllerView.setService(service);
         }
 
         @Override

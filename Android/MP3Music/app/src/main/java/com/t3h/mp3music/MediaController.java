@@ -12,7 +12,7 @@ public class MediaController implements MediaPlayer.OnCompletionListener {
     private ArrayList<Song> songs;
     private Context context;
     private MediaPlayer player;
-    private int index;
+    public int index;
 
     public MediaController(ArrayList<Song> songs, Context context) {
         this.songs = songs;
@@ -62,6 +62,14 @@ public class MediaController implements MediaPlayer.OnCompletionListener {
         if (player != null) {
             player.seekTo(position);
         }
+    }
+
+    public String getSongName() {
+        return songs.get(index).getTitle();
+    }
+
+    public boolean isPlaying() {
+        return player == null ? false : player.isPlaying();
     }
 
     public int getDuration() {
