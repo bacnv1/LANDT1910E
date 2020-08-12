@@ -13,6 +13,11 @@ buildscript {
         viewModel = "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
         // LiveData
         liveData = "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+
+        material = 'com.google.android.material:material:+'
+
+        rxAndroid = 'io.reactivex.rxjava3:rxandroid:3.0.0'
+        rxJava = 'io.reactivex.rxjava3:rxjava:3.0.0'
     }
 
     repositories {
